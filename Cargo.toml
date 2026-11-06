@@ -1,1 +1,116 @@
-"[package]\nname = \"bevy_tasks\"\nversion = \"0.19.0-dev\"\npublish = false\nedition = \"2024\"\ndescription = \"A task executor for Bevy Engine\"\nhomepage = \"https://bevy.org\"\nrepository = \"https://github.com/bevyengine/bevy\"\nlicense = \"MIT OR Apache-2.0\"\nkeywords = [\"bevy\"]\n\n[features]\ndefault = [\"async_executor\", \"futures-lite\"]\n\n# Enables multi-threading support.\n# Without this feature, all tasks will be run on a single thread.\nmulti_threaded = [\n  \"bevy_platform/std\",\n  \"dep:async-channel\",\n  \"dep:concurrent-queue\",\n  \"async_executor\",\n]\n\n# Uses `async-executor` as a task execution backend.\n# This backend is incompatible with `no_std` targets.\nasync_executor = [\"bevy_platform/std\", \"dep:async-executor\", \"futures-lite\"]\n\n# Provide an implementation of `block_on` from  `futures-lite`.\nfutures-lite = [\"bevy_platform/futures-lite\"]\n\n# Use async-io's implementation of block_on instead of futures-lite's implementation.\n# This is preferred if your application uses async-io.\nasync-io = [\"bevy_platform/async-io\"]\n\n[dependencies]\nbevy_platform = { path = \"../bevy_platform\", version = \"0.19.0-dev\", default-features = false, features = [\n  \"alloc\",\n] }\n\nfutures-lite = { version = \"2.0.1\", default-features = false, features = [\n  \"alloc\",\n] }\nasync-task = { version = \"4.4.0\", default-features = false }\nderive_more = { version = \"2\", default-features = false, features = [\n  \"deref\",\n  \"deref_mut\",\n] }\nasync-executor = { version = \"1.11\", optional = true }\nasync-channel = { version = \"2.3.0\", optional = true }\nconcurrent-queue = { version = \"2.0.0\", optional = true }\natomic-waker = { version = \"1\", default-features = false }\ncrossbeam-queue = { version = \"0.3\", default-features = false, features = [\n  \"alloc\",\n] }\n\n[target.'cfg(target_arch = \"wasm32\")'.dependencies]\nweb-task = \"1\"\n\n[target.'cfg(not(all(target_has_atomic = \"8\", target_has_atomic = \"16\", target_has_atomic = \"32\", target_has_atomic = \"64\", target_has_atomic = \"ptr\")))'.dependencies]\nasync-task = { version = \"4.4.0\", default-features = false, features = [\n  \"portable-atomic\",\n] }\nheapless = { version = \"0.9\", default-features = false, features = [\n  \"portable-atomic\",\n] }\natomic-waker = { version = \"1\", default-features = false, features = [\n  \"portable-atomic\",\n] }\n\n[dev-dependencies]\nfutures-lite = { version = \"2.0.1\", default-features = false, features = [\n  \"std\",\n] }\nasync-channel = \"2.3.0\"\n\n[lints.clippy]\ndoc_markdown = \"warn\"\nmanual_let_else = \"warn\"\nmatch_same_arms = \"warn\"\nredundant_closure_for_method_calls = \"warn\"\nredundant_else = \"warn\"\nsemicolon_if_nothing_returned = \"warn\"\ntype_complexity = \"allow\"\nundocumented_unsafe_blocks = \"warn\"\nunwrap_or_default = \"warn\"\nneedless_lifetimes = \"allow\"\ntoo_many_arguments = \"allow\"\nnonstandard_macro_braces = \"warn\"\nprint_stdout = \"warn\"\nprint_stderr = \"warn\"\nptr_as_ptr = \"warn\"\nptr_cast_constness = \"warn\"\nref_as_ptr = \"warn\"\ntoo_long_first_doc_paragraph = \"allow\"\nstd_instead_of_core = \"allow\"\nstd_instead_of_alloc = \"warn\"\nalloc_instead_of_core = \"warn\"\nallow_attributes = \"warn\"\nallow_attributes_without_reason = \"warn\"\n\n[lints.rust]\nmissing_docs = \"warn\"\nunexpected_cfgs = { level = \"warn\", check-cfg = ['cfg(docsrs_dep)'] }\nunsafe_code = \"deny\"\nunsafe_op_in_unsafe_fn = \"warn\"\nunused_qualifications = \"warn\"\n\n\n[package.metadata.docs.rs]\nrustdoc-args = [\n  \"-Zunstable-options\",\n  \"--generate-link-to-definition\",\n  \"--generate-macro-expansion\",\n]\nall-features = true\n"
+[package]
+name = "bevy_tasks"
+version = "0.19.0-dev"
+publish = false
+edition = "2024"
+description = "A task executor for Bevy Engine"
+homepage = "https://bevy.org"
+repository = "https://github.com/bevyengine/bevy"
+license = "MIT OR Apache-2.0"
+keywords = ["bevy"]
+
+[features]
+default = ["async_executor", "futures-lite"]
+
+# Enables multi-threading support.
+# Without this feature, all tasks will be run on a single thread.
+multi_threaded = [
+  "bevy_platform/std",
+  "dep:async-channel",
+  "dep:concurrent-queue",
+  "async_executor",
+]
+
+# Uses `async-executor` as a task execution backend.
+# This backend is incompatible with `no_std` targets.
+async_executor = ["bevy_platform/std", "dep:async-executor", "futures-lite"]
+
+# Provide an implementation of `block_on` from  `futures-lite`.
+futures-lite = ["bevy_platform/futures-lite"]
+
+# Use async-io's implementation of block_on instead of futures-lite's implementation.
+# This is preferred if your application uses async-io.
+async-io = ["bevy_platform/async-io"]
+
+[dependencies]
+bevy_platform = { path = "../bevy_platform", version = "0.19.0-dev", default-features = false, features = [
+  "alloc",
+] }
+
+futures-lite = { version = "2.0.1", default-features = false, features = [
+  "alloc",
+] }
+async-task = { version = "4.4.0", default-features = false }
+derive_more = { version = "2", default-features = false, features = [
+  "deref",
+  "deref_mut",
+] }
+async-executor = { version = "1.11", optional = true }
+async-channel = { version = "2.3.0", optional = true }
+concurrent-queue = { version = "2.0.0", optional = true }
+atomic-waker = { version = "1", default-features = false }
+crossbeam-queue = { version = "0.3", default-features = false, features = [
+  "alloc",
+] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-task = "1"
+
+[target.'cfg(not(all(target_has_atomic = "8", target_has_atomic = "16", target_has_atomic = "32", target_has_atomic = "64", target_has_atomic = "ptr")))'.dependencies]
+async-task = { version = "4.4.0", default-features = false, features = [
+  "portable-atomic",
+] }
+heapless = { version = "0.9", default-features = false, features = [
+  "portable-atomic",
+] }
+atomic-waker = { version = "1", default-features = false, features = [
+  "portable-atomic",
+] }
+
+[dev-dependencies]
+futures-lite = { version = "2.0.1", default-features = false, features = [
+  "std",
+] }
+async-channel = "2.3.0"
+
+[lints.clippy]
+doc_markdown = "warn"
+manual_let_else = "warn"
+match_same_arms = "warn"
+redundant_closure_for_method_calls = "warn"
+redundant_else = "warn"
+semicolon_if_nothing_returned = "warn"
+type_complexity = "allow"
+undocumented_unsafe_blocks = "warn"
+unwrap_or_default = "warn"
+needless_lifetimes = "allow"
+too_many_arguments = "allow"
+nonstandard_macro_braces = "warn"
+print_stdout = "warn"
+print_stderr = "warn"
+ptr_as_ptr = "warn"
+ptr_cast_constness = "warn"
+ref_as_ptr = "warn"
+too_long_first_doc_paragraph = "allow"
+std_instead_of_core = "allow"
+std_instead_of_alloc = "warn"
+alloc_instead_of_core = "warn"
+allow_attributes = "warn"
+allow_attributes_without_reason = "warn"
+
+[lints.rust]
+missing_docs = "warn"
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(docsrs_dep)'] }
+unsafe_code = "deny"
+unsafe_op_in_unsafe_fn = "warn"
+unused_qualifications = "warn"
+
+
+[package.metadata.docs.rs]
+rustdoc-args = [
+  "-Zunstable-options",
+  "--generate-link-to-definition",
+  "--generate-macro-expansion",
+]
+all-features = true
+
